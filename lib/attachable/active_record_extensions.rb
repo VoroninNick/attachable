@@ -37,7 +37,7 @@ module Attachable
         end
 
         # paperclip styles
-        styles = options[:styles]
+        styles = options[:styles] || {}
         define_method "#{name}_styles" do
           styles
         end
