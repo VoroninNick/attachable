@@ -86,7 +86,7 @@ class Attachable::Asset < ActiveRecord::Base
   end
 
 
-  if Attachable.use_translations
+  if Attachable.use_translations?
 
     translates :data_alt
     accepts_nested_attributes_for :translations

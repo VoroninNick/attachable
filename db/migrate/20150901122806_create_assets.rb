@@ -11,13 +11,13 @@ class CreateAssets < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    if Attachable.use_translations
+    if Attachable.use_translations?
       Attachable::Asset.create_translation_table!(data_alt: :string)
     end
   end
 
   def down
-    if Attachable.use_translations
+    if Attachable.use_translations?
       Attachable::Asset.drop_translation_table!
     end
 
