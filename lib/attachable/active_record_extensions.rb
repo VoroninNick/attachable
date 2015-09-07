@@ -18,14 +18,24 @@ module Attachable
       end
 
       def has_attachments(name = nil, **options)
+        #puts "name: #{name.inspect}"
+        #puts "options: #{options.inspect}"
         multiple = options[:multiple]
         multiple ||= true
+
+        #puts "options: #{options.inspect}"
+        #puts "multiple: #{multiple.inspect}"
 
         reflection_method = :has_one
         reflection_method = :has_many if multiple
 
+        #puts "reflection_method: #{reflection_method}"
+
+
         name ||=  multiple ? :attachments : :attachment
         return false if self._reflections.keys.include?(name.to_s)
+
+        #puts "name: #{name}"
 
         send reflection_method, name, -> { where(assetable_field_name: name) }, as: :assetable, class_name: "Attachable::Asset", dependent: :destroy, autosave: true
         accepts_nested_attributes_for name
@@ -54,23 +64,34 @@ module Attachable
             f.data = file
           end
         end
+
+        return options
       end
 
       def has_attachment(name = nil, **options)
         options[:multiple] = false
-        has_attachments(name, **options)
+        has_attachments(name, options)
       end
 
       def has_images(name = nil, **options)
-        multiple = options[:multiple]
-        multiple ||= true
+        multiple = options[:multiple] ||= true
         name ||= multiple ? :images : :image
-        has_attachments(name, **options)
+
+        # puts "===== has_images ======"
+        # puts "options: #{options.inspect}"
+        # puts "multiple: #{multiple.inspect}"
+        # puts "name: #{name.inspect}"
+        # puts "===== end has_images ======"
+        has_attachments(name, options)
+
+
       end
 
       def has_image(name = nil, **options)
         options[:multiple] = false
-        has_images(name, **options)
+        has_images(name, options)
+
+        return options
       end
 
       def attachable?

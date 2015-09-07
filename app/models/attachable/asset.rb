@@ -53,14 +53,14 @@ class Attachable::Asset < ActiveRecord::Base
     new_data_file_name = value
     rename(new_data_file_name)
 
-    self.data_file_name = value
+    #self.data_file_name = value
 
-    # if data_file_name.blank?
-    #   #new_data_file_name = self.data_file_name
-    # else
-    #   new_name = value
-    #   rename(new_name)
-    # end
+    if data_file_name.blank?
+      #new_data_file_name = self.data_file_name
+    else
+      new_name = value
+      #rename(new_name)
+    end
   end
 
   attr_accessible :file_name_fallback
@@ -118,11 +118,11 @@ class Attachable::Asset < ActiveRecord::Base
       end
 
       field :data
-      field :file_name_fallback, :string do
-        label do
-          ActiveRecord::Base.human_attribute_name(:data_file_name)
-        end
-      end
+      # field :file_name_fallback, :string do
+      #   label do
+      #     ActiveRecord::Base.human_attribute_name(:data_file_name)
+      #   end
+      # end
       if Attachable.use_translations
         field :translations, :globalize_tabs
       end
