@@ -5,16 +5,27 @@ require "rails_admin/config/fields/types/images"
 
 module Attachable
   @use_translations = proc { I18n.available_locales.count > 1 }
+  @subdomain = false
+  @assets_domain = false
 
   class << self
     attr_accessor :use_translations
-
+    attr_accessor :subdomain
+    attr_accessor :assets_domain
     def use_translations?
       if @use_translations.is_a?(Proc)
         return !!@use_translations.call
       else
         return false
       end
+    end
+
+    def subdomain?
+      !!@subdomain && @subdomain.present?
+    end
+
+    def assets_domain?
+      !!@assets_domain && @assets_domain.present?
     end
   end
 end

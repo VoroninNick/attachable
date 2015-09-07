@@ -25,11 +25,17 @@ class Attachable::Asset < ActiveRecord::Base
 
   do_not_validate_attachment_file_type :data
 
-  delegate :url, :path, :exists?, :styles, to: :data
+  delegate :path, :exists?, :styles, to: :data
 
   #before_save
 
-
+  def url(style = nil)
+    data.try do |data|
+      domain_str = ""
+      domain_str = "//#{Attachable.assets_domain}" if Attachable.assets_domain?
+      "#{domain_str}#{data.url(style)}"
+    end
+  end
 
   def attachment_styles
     self.assetable.try{|a| a.send("#{self.assetable_field_name}_styles") rescue nil } || {}
@@ -53,10 +59,10 @@ class Attachable::Asset < ActiveRecord::Base
     new_data_file_name = value
     rename(new_data_file_name)
 
-    #self.data_file_name = value
+    self.data_file_name = value
 
     if data_file_name.blank?
-      #new_data_file_name = self.data_file_name
+      new_data_file_name = self.data_file_name
     else
       new_name = value
       #rename(new_name)
@@ -118,11 +124,11 @@ class Attachable::Asset < ActiveRecord::Base
       end
 
       field :data
-      # field :file_name_fallback, :string do
-      #   label do
-      #     ActiveRecord::Base.human_attribute_name(:data_file_name)
-      #   end
-      # end
+      field :file_name_fallback, :string do
+        label do
+          ActiveRecord::Base.human_attribute_name(:data_file_name)
+        end
+      end
       if Attachable.use_translations
         field :translations, :globalize_tabs
       end
