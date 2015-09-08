@@ -124,12 +124,14 @@ class Attachable::Asset < ActiveRecord::Base
       end
 
       field :data
+
       field :file_name_fallback, :string do
+        hide
         label do
           ActiveRecord::Base.human_attribute_name(:data_file_name)
         end
       end
-      if Attachable.use_translations
+      if Attachable.use_translations?
         field :translations, :globalize_tabs
       end
       #end
