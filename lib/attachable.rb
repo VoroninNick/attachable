@@ -4,7 +4,7 @@ require "rails_admin"
 require "rails_admin/config/fields/types/images"
 
 module Attachable
-  @use_translations = proc { I18n.available_locales.count > 1 }
+  @use_translations = proc { ActiveRecord::Base.respond_to?(:translates?) && I18n.available_locales.count > 1 }
   @subdomain = false
   @assets_domain = false
 
@@ -16,7 +16,7 @@ module Attachable
       if @use_translations.is_a?(Proc)
         return !!@use_translations.call
       else
-        return false
+        return !!@use_translations
       end
     end
 
