@@ -57,9 +57,9 @@ class Attachable::Asset < ActiveRecord::Base
 
   def file_name_fallback=(value)
     new_data_file_name = value
-    rename(new_data_file_name)
+    #rename(new_data_file_name)
 
-    self.data_file_name = value
+    #self.data_file_name = value
 
     if data_file_name.blank?
       new_data_file_name = self.data_file_name
