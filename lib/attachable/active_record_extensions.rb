@@ -38,7 +38,7 @@ module Attachable
         #puts "name: #{name}"
 
         send reflection_method, name, -> { where(assetable_field_name: name) }, as: :assetable, class_name: "Attachable::Asset", dependent: :destroy, autosave: true
-        accepts_nested_attributes_for name
+        accepts_nested_attributes_for name, allow_destroy: true
         attr_accessible name, "#{name}_attributes"
 
         # paperclip validation
