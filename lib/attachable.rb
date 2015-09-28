@@ -12,6 +12,7 @@ module Attachable
     attr_accessor :use_translations
     attr_accessor :subdomain
     attr_accessor :assets_domain
+    attr_accessor :base_path
     def use_translations?
       if @use_translations.is_a?(Proc)
         return !!@use_translations.call
@@ -26,6 +27,10 @@ module Attachable
 
     def assets_domain?
       !!@assets_domain && @assets_domain.present?
+    end
+
+    def base_path
+      @base_path ||= Rails.root.join("public").to_s
     end
   end
 end

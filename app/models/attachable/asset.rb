@@ -35,11 +35,14 @@ class Attachable::Asset < ActiveRecord::Base
   end
 
   def exists?(style = nil)
-    if data.exists? && !data.exists?(style)
+    original_full_path = Attachable.base_path + "/" + data.url()
+    full_path = Attachable.base_path + "/" + data.url(style)
+
+    if File.exists?(original_full_path) && !File.exists?(full_path)
       data.reprocess!
     end
 
-    data.exists?(style)
+    File.exists?(full_path)
   end
 
   def url(style = nil)
