@@ -51,9 +51,9 @@ class Attachable::Asset < ActiveRecord::Base
     data.try do |data|
       domain_str = ""
       domain_str = "//#{Attachable.assets_domain}" if Attachable.assets_domain?
-      if data.exists? && !data.exists?(style)
-        data.reprocess!
-      end
+      #if data.exists? && !data.exists?(style)
+      data.reprocess!
+      #end
       "#{domain_str}#{data.url(style)}"
     end
   end
