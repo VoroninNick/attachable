@@ -20,7 +20,7 @@ class Attachable::Asset < ActiveRecord::Base
 
   belongs_to :assetable, polymorphic: true
 
-  has_attached_file :data, styles: proc {|attachment| attachment.instance.attachment_styles }, path:
+  has_attached_file :data, styles: proc {|attachment| attachment.instance.attachment_styles }#, path:
   attr_accessible :data, :delete_data
 
   do_not_validate_attachment_file_type :data
