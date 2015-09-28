@@ -20,7 +20,7 @@ class Attachable::Asset < ActiveRecord::Base
 
   belongs_to :assetable, polymorphic: true
 
-  has_attached_file :data, styles: proc {|attachment| attachment.instance.attachment_styles }
+  has_attached_file :data, styles: proc {|attachment| attachment.instance.attachment_styles }, path:
   attr_accessible :data, :delete_data
 
   do_not_validate_attachment_file_type :data
@@ -40,9 +40,9 @@ class Attachable::Asset < ActiveRecord::Base
     original_full_path = path
     full_path = path(style)
 
-    if File.exists?(original_full_path) && !File.exists?(full_path)
-      data.reprocess!
-    end
+    #if File.exists?(original_full_path) && !File.exists?(full_path)
+    #  data.reprocess!
+    #end
 
     File.exists?(full_path)
   end
@@ -52,7 +52,7 @@ class Attachable::Asset < ActiveRecord::Base
       domain_str = ""
       domain_str = "//#{Attachable.assets_domain}" if Attachable.assets_domain?
       #if data.exists? && !data.exists?(style)
-      data.reprocess!
+      #data.reprocess!
       #end
       "#{domain_str}#{data.url(style)}"
     end
