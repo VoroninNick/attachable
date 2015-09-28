@@ -25,9 +25,22 @@ class Attachable::Asset < ActiveRecord::Base
 
   do_not_validate_attachment_file_type :data
 
-  delegate :path, :exists?, :styles, to: :data
+  #delegate :path, :exists?, :styles, to: :data
 
   #before_save
+
+  def path(style = nil)
+    data.reprocess!
+    data.path(style)
+  end
+
+  def exists?(style = nil)
+    if data.exists? && !data.exists?(style)
+      data.reprocess!
+    end
+
+    data.exists?(style)
+  end
 
   def url(style = nil)
     data.try do |data|
