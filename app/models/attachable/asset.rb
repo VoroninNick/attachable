@@ -30,8 +30,10 @@ class Attachable::Asset < ActiveRecord::Base
   #before_save
 
   def path(style = nil)
-    data.reprocess!
-    data.path(style)
+    #data.reprocess!
+    #data.path(style)
+    full_path = Attachable.base_path + "/" + data.url(style)
+    full_path
   end
 
   def exists?(style = nil)
