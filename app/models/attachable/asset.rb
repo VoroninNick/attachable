@@ -33,6 +33,8 @@ class Attachable::Asset < ActiveRecord::Base
     #data.reprocess!
     #data.path(style)
     full_path = Attachable.base_path + data.url(style)
+    full_path_suffix_index = full_path.index("?")
+    full_path[full_path_suffix_index, full_path.length] = ''
     full_path
   end
 

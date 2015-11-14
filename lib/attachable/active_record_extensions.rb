@@ -3,8 +3,24 @@ module Attachable
     extend ActiveSupport::Concern
 
     def add_attachments(name, files)
+      from_array = files.respond_to?(:each)
+
+      unless files.respond_to?(:each)
+        files = [files]
+      end
+
+      db_files = []
+
       files.each do |file|
         f = self.send(name).build(data: file)
+        asset = self.send(name).last
+        db_files << asset
+      end
+
+      if from_array
+        return db_files
+      else
+        return db_files.first
       end
     end
 

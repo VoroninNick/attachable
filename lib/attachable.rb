@@ -30,7 +30,8 @@ module Attachable
     end
 
     def base_path
-      @base_path ||= Rails.root.join("public").to_s
+      @base_path = Rails.root.join("public").to_s if @base_path.blank?
+      @base_path
     end
   end
 end
