@@ -28,16 +28,56 @@ module Attachable
       self.(ActiveRecord::Reflection::HasManyReflection)
     end
 
+    def reprocess!(name)
+      send(name).try do |s|
+        s.reprocess! if s.respond_to?(:reprocess!)
+      end
+    end
+
+    def reprocess_all
+      self.all_attachment_definitions.each do |name|
+        if self.is_a?(ActiveRecord::Relation)
+          self.each do |item|
+            item.send("reprocess_#{name}!")
+          end
+        else
+          self.send("reprocess_#{name}!")
+        end
+
+
+      end
+    end
+
+    def all_attachment_definitions
+      self.class.all_attachment_definitions
+    end
+
     module ClassMethods
       def get_caller_file_name &block
         block.send :eval, "__FILE__"
+      end
+
+      def has_any_attachment_definitions?
+        self.reflections.each do |name, reflection|
+          if reflection.options[:class_name] == 'Cms::MetaTags'
+            return true
+          end
+        end
+
+        false
+      end
+
+      def all_attachment_definitions
+        self.reflections.select{|name, reflection| reflection.options[:class_name] == 'Attachable::Asset' }.map do |name, reflection|
+          reflection.name
+        end#.select(&:present?)
       end
 
       def has_attachments(name = nil, **options)
         #puts "name: #{name.inspect}"
         #puts "options: #{options.inspect}"
         multiple = options[:multiple]
-        multiple ||= true
+        multiple = true if multiple.nil?
 
         #puts "options: #{options.inspect}"
         #puts "multiple: #{multiple.inspect}"
@@ -45,13 +85,18 @@ module Attachable
         reflection_method = :has_one
         reflection_method = :has_many if multiple
 
-        #puts "reflection_method: #{reflection_method}"
+        puts "options: #{multiple.inspect}"
+        puts "reflection_method: #{reflection_method}"
 
 
         name ||=  multiple ? :attachments : :attachment
         return false if self._reflections.keys.include?(name.to_s)
 
         #puts "name: #{name}"
+
+        if !has_any_attachment_definitions?
+          self.after_save :reprocess_all
+        end
 
         send reflection_method, name, -> { where(assetable_field_name: name) }, as: :assetable, class_name: "Attachable::Asset", dependent: :destroy, autosave: true
         accepts_nested_attributes_for name, allow_destroy: true
@@ -81,6 +126,12 @@ module Attachable
           end
         end
 
+        define_method "reprocess_#{name}!" do
+          reprocess!(name)
+        end
+
+
+
         return options
       end
 
@@ -90,14 +141,9 @@ module Attachable
       end
 
       def has_images(name = nil, **options)
-        multiple = options[:multiple] ||= true
-        name ||= multiple ? :images : :image
+        options[:multiple] = true if options[:multiple].nil?
+        name ||= options[:multiple] ? :images : :image
 
-        # puts "===== has_images ======"
-        # puts "options: #{options.inspect}"
-        # puts "multiple: #{multiple.inspect}"
-        # puts "name: #{name.inspect}"
-        # puts "===== end has_images ======"
         has_attachments(name, options)
 
 

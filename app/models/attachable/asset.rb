@@ -64,6 +64,10 @@ class Attachable::Asset < ActiveRecord::Base
     self.assetable.try{|a| a.send("#{self.assetable_field_name}_styles") rescue nil } || {}
   end
 
+  def styles
+    attachment_styles
+  end
+
   def file_name_fallback
     data_file_name
   end
