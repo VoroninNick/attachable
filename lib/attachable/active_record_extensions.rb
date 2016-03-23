@@ -70,29 +70,24 @@ module Attachable
       def all_attachment_definitions
         self.reflections.select{|name, reflection| reflection.options[:class_name] == 'Attachable::Asset' }.map do |name, reflection|
           reflection.name
-        end#.select(&:present?)
+        end
       end
 
       def has_attachments(name = nil, **options)
-        #puts "name: #{name.inspect}"
-        #puts "options: #{options.inspect}"
+      
         multiple = options[:multiple]
         multiple = true if multiple.nil?
 
-        #puts "options: #{options.inspect}"
-        #puts "multiple: #{multiple.inspect}"
+      
 
         reflection_method = :has_one
         reflection_method = :has_many if multiple
 
-        puts "options: #{multiple.inspect}"
-        puts "reflection_method: #{reflection_method}"
+
 
 
         name ||=  multiple ? :attachments : :attachment
         return false if self._reflections.keys.include?(name.to_s)
-
-        #puts "name: #{name}"
 
         if !has_any_attachment_definitions?
           self.after_save :reprocess_all
