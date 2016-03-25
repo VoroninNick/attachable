@@ -25,6 +25,16 @@ class Attachable::Asset < ActiveRecord::Base
 
   do_not_validate_attachment_file_type :data
 
+  # after_create {
+  #   #data.reprocess!
+  #
+  #   true
+  # }
+
+  after_create :reprocess!
+
+  #after_commit :reprocess!
+
   #delegate :path, :exists?, :styles, to: :data
 
   #before_save
@@ -163,6 +173,19 @@ class Attachable::Asset < ActiveRecord::Base
       end
       #end
     end
+  end
+
+  def reprocess!(style = nil)
+
+    data.assign(data)
+    data.save
+    # if style
+    #   data.reprocess!(style)
+    # else
+    #   data.reprocess!
+    # end
+
+    true
   end
 
 

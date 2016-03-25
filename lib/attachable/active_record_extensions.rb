@@ -29,9 +29,18 @@ module Attachable
     end
 
     def reprocess!(name)
-      send(name).try do |s|
-        s.reprocess! if s.respond_to?(:reprocess!)
+
+      send(name).try do |res|
+        if res.is_a?(ActiveRecord::Relation)
+          res.each do |asset|
+            asset.reprocess! if asset.respond_to?(:reprocess!)
+          end
+        else
+          res.reprocess! if asset.respond_to?(:reprocess!)
+        end
       end
+
+      true
     end
 
     def reprocess_all
@@ -46,6 +55,8 @@ module Attachable
 
 
       end
+
+      true
     end
 
     def all_attachment_definitions
@@ -90,7 +101,7 @@ module Attachable
         return false if self._reflections.keys.include?(name.to_s)
 
         if !has_any_attachment_definitions?
-          self.after_save :reprocess_all
+          #self.after_save :reprocess_all
         end
 
         send reflection_method, name, -> { where(assetable_field_name: name) }, as: :assetable, class_name: "Attachable::Asset", dependent: :destroy, autosave: true
