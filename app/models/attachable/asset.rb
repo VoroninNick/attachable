@@ -20,7 +20,9 @@ class Attachable::Asset < ActiveRecord::Base
 
   belongs_to :assetable, polymorphic: true
 
-  has_attached_file :data, styles: proc {|attachment| attachment.instance.attachment_styles }#, path:
+  has_attached_file :data, styles: proc {|attachment| attachment.instance.attachment_styles }, 
+    url: "/system/attachable/assets/data/000/000/:id/:style/:basename:extension",
+    path: ":rails_root/public/:url"
   attr_accessible :data, :delete_data
 
   do_not_validate_attachment_file_type :data if respond_to?(:do_not_validate_attachment_file_type)
