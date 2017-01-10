@@ -95,7 +95,7 @@ module Attachable
         reflection_method = :has_many if multiple
 
 
-
+        asset_class = options[:class_name] || options[:class] || "Attachable::Asset"
 
         name ||=  multiple ? :attachments : :attachment
         return false if self._reflections.keys.include?(name.to_s)
@@ -104,7 +104,7 @@ module Attachable
           #self.after_save :reprocess_all
         end
 
-        send reflection_method, name, -> { where(assetable_field_name: name) }, as: :assetable, class_name: "Attachable::Asset", dependent: :destroy, autosave: true
+        send reflection_method, name, -> { where(assetable_field_name: name) }, as: :assetable, class_name: asset_class, dependent: :destroy, autosave: true
         accepts_nested_attributes_for name, allow_destroy: true
         attr_accessible name, "#{name}_attributes"
 
