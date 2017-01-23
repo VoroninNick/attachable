@@ -79,7 +79,10 @@ module Attachable
       end
 
       def all_attachment_definitions
-        self.reflections.select{|name, reflection| reflection.options[:class_name] == 'Attachable::Asset' }.map do |name, reflection|
+        base_asset_class_name = 'Attachable::Asset'
+        self.reflections.select{|name, reflection|
+          reflection.options[:class_name].present? && reflection.options[:class_name] == base_asset_class_name || (Object.const_get(reflection.options[:class_name]).superclass.name == base_asset_class_name rescue false)
+        }.map do |name, reflection|
           reflection.name
         end
       end

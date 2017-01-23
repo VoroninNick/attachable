@@ -76,6 +76,11 @@ class Attachable::Asset < ActiveRecord::Base
     self.assetable.try{|a| a.send("#{self.assetable_field_name}_styles") rescue nil } || {}
   end
 
+  # currently not in use. it would be good if paperclip support dynamic processors like styles
+  def attachment_processors
+    self.assetable.try{|a| a.send("#{self.assetable_field_name}_processors") rescue nil } || {}
+  end
+
   def styles
     attachment_styles
   end
