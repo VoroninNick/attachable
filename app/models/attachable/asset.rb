@@ -183,9 +183,12 @@ class Attachable::Asset < ActiveRecord::Base
   end
 
   def reprocess!(style = nil)
-
-    data.assign(data)
-    data.save
+    begin
+      data.assign(data)
+      data.save
+    rescue
+      puts "asset ##{self.id} reprocess! failed"
+    end
     # if style
     #   data.reprocess!(style)
     # else
