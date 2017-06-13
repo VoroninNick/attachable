@@ -2,7 +2,7 @@ module Attachable
   module ActiveRecordExtensions
     extend ActiveSupport::Concern
 
-    def add_attachments(name, files)
+    def _add_attachments(name, files)
       from_array = files.respond_to?(:each)
 
       unless files.respond_to?(:each)
@@ -125,7 +125,7 @@ module Attachable
 
         if multiple
           define_method "add_#{name}" do |attachments|
-            add_attachments(name, attachments)
+            _add_attachments(name, attachments)
           end
         else
           define_method "#{name}=" do |file|
