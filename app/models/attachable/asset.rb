@@ -17,6 +17,10 @@ require "paperclip"
 class Attachable::Asset < ActiveRecord::Base
   self.table_name = :assets
   attr_accessible *attribute_names
+  
+  default_scope do
+    order("id asc")
+  end
 
   belongs_to :assetable, polymorphic: true
 
