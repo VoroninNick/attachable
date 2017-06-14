@@ -18,6 +18,12 @@ class Attachable::Asset < ActiveRecord::Base
   self.table_name = :assets
   attr_accessible *attribute_names
   
+  begin
+    extend Enumerize
+    enumerize :data_watermark_position, in: ["NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast"], default: "SouthEast"
+  rescue
+  end  
+  
   default_scope do
     order("id asc")
   end
