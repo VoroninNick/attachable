@@ -36,6 +36,7 @@ class Attachable::Asset < ActiveRecord::Base
       if changed_position
         keys_to_reprocess = []
         h = self.data.styles
+        puts "h: #{h.inspect}"
         if h.is_a?(Hash) && h[:original] && h[:original].is_a?(Hash) && h[:original][:position].is_a?(Proc)
           h.keys
         end  
