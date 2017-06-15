@@ -46,6 +46,7 @@ class Attachable::Asset < ActiveRecord::Base
             next nil
           end  
         }.select(&:present?)
+        puts "keys_to_reprocess: #{keys_to_reprocess.inspect}"
         if keys_to_reprocess.present?
           self.data.reprocess!(*keys_to_reprocess)
         end  
