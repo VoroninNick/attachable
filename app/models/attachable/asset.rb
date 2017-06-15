@@ -36,14 +36,14 @@ class Attachable::Asset < ActiveRecord::Base
       if changed_position
         keys_to_reprocess = []
         styles = self.data.styles
-        puts "h: #{h.inspect}"
+        puts "h: #{styles.inspect}"
         
         need_original = styles[:original].try{|s| args = s.instance_variable_get(:@other_args); args[:position].is_a?(Proc) }
         
         if need_original
           keys_to_reprocess = styles.keys
         end  
-        keys_to_reprocess = h.map{|k, v|
+        keys_to_reprocess = styles.map{|k, v|
           args = v.instance_variable_get(:@other_args)
           if args[:position].is_a?(Proc)  
             next k
