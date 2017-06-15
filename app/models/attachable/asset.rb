@@ -35,13 +35,17 @@ class Attachable::Asset < ActiveRecord::Base
       puts "====================================="
       if changed_position
         keys_to_reprocess = []
-        h = self.data.styles
+        styles = self.data.styles
         puts "h: #{h.inspect}"
-        if h.is_a?(Hash) && h[:original] && h[:original].is_a?(Hash) && h[:original][:position].is_a?(Proc)
-          h.keys
+        
+        need_original = styles[:original].try{|s| args = s.instance_variable_get(:@other_args); args[:position].is_a?(Proc) }
+        
+        if need_original
+          keys_to_reprocess = styles.keys
         end  
         keys_to_reprocess = h.map{|k, v|
-          if v.is_a?(Hash) && v[:position].present?  
+          args = v.instance_variable_get(:@other_args)
+          if args[:position].is_a?(Proc)  
             next k
           else
             next nil
