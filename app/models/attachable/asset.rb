@@ -24,6 +24,15 @@ class Attachable::Asset < ActiveRecord::Base
     after_save :reprocess_data_if_needed
     def reprocess_data_if_needed
       changed_position = self.data_watermark_position_changed? && (self.data_watermark_position_was.present? || self.data_watermark_position != "SouthEast")
+      puts "====================================="
+      puts "====================================="
+      puts "reprocess_data_if_needed"
+      puts "data_watermark_position_changed?: #{data_watermark_position_changed?.inspect}"
+      puts "data_watermark_position: #{data_watermark_position.inspect}"
+      puts "data_watermark_position_was: #{data_watermark_position_was.inspect}"
+      puts "changed_position: #{changed_position.inspect}"
+      puts "====================================="
+      puts "====================================="
       if changed_position
         keys_to_reprocess = []
         h = self.data.styles
