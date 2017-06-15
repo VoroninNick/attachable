@@ -21,6 +21,24 @@ class Attachable::Asset < ActiveRecord::Base
   begin
     extend Enumerize
     enumerize :data_watermark_position, in: ["NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast"], default: "SouthEast"
+    after_save :reprocess_data_if_needed
+    def reprocess_data_if_needed
+      if self.data_watermark_position_changed?
+        keys_to_reprocess = []
+        h = self.data.styles
+        if h.is_a?(Hash) && h[:original] && h[:original].is_a?(Hash) && h[:original][:position].is_a?(Proc)
+          h.keys
+        end  
+        keys_to_reprocess = h.map{|k, v|
+          if v.is_a?(Hash) && v[:position].present?  
+            next k
+          else
+            next nil
+          end  
+        }.select(&:present?)
+        self.data.reprocess!(*keys_to_reprocess)
+      end  
+    end  
   rescue
   end  
   
