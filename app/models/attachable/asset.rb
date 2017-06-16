@@ -64,6 +64,17 @@ class Attachable::Asset < ActiveRecord::Base
     default_scope do
       order("sorting_position,id asc")
     end
+    after_create do
+      if assetable
+        items = assetable.send(assetable_field_name).pluck(:id, :sorting_position)
+        #max_item = items.map{|item| item[1] || item[0] }.max
+        #count = items.count
+        #if max_item
+        
+        self.sorting_position ||= (items.last[1] || items.count) + 1
+        self.save
+      end
+    end  
   else
     default_scope do
       order("id asc")
