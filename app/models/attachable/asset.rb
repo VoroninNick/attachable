@@ -60,8 +60,14 @@ class Attachable::Asset < ActiveRecord::Base
   rescue
   end  
   
-  default_scope do
-    order("id asc")
+  if self.table_exists? && self.column_names.include?("sorting_position")
+    default_scope do
+      order("id asc")
+    end
+  else
+    default_scope do
+      order("sorting_position,id asc")
+    end
   end
 
   belongs_to :assetable, polymorphic: true
