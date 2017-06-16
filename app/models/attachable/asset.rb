@@ -72,7 +72,7 @@ class Attachable::Asset < ActiveRecord::Base
         #count = items.count
         #if max_item
         
-        self.sorting_position = (items.last[1] || items.count) + 1
+        self.sorting_position = (items.last[1].try{|i| i + 1} || items.count
         self.save
       end
     end  
