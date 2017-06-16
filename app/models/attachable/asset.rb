@@ -62,11 +62,11 @@ class Attachable::Asset < ActiveRecord::Base
   
   if self.table_exists? && self.column_names.include?("sorting_position")
     default_scope do
-      order("id asc")
+      order("sorting_position,id asc")
     end
   else
     default_scope do
-      order("sorting_position,id asc")
+      order("id asc")
     end
   end
 
