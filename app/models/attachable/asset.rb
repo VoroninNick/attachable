@@ -53,7 +53,7 @@ class Attachable::Asset < ActiveRecord::Base
         }.select(&:present?)
         puts "keys_to_reprocess: #{keys_to_reprocess.inspect}"
         if keys_to_reprocess.present?
-          self.data.reprocess!(*keys_to_reprocess)
+          self.reprocess!(*keys_to_reprocess)
         end  
       end  
     end  
@@ -246,7 +246,7 @@ class Attachable::Asset < ActiveRecord::Base
     end
   end
 
-  def reprocess!(style = nil)
+  def reprocess!(*styles)
     begin
       data.assign(data)
       data.save
