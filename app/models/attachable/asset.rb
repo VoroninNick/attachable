@@ -21,7 +21,7 @@ class Attachable::Asset < ActiveRecord::Base
   begin
     extend Enumerize
     enumerize :data_watermark_position, in: ["NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast"], default: "SouthEast"
-    after_save :reprocess_data_if_needed
+    before_save :reprocess_data_if_needed
     def reprocess_data_if_needed
       changed_position = self.data_watermark_position_changed? && self.data_watermark_position_was.present?
       puts "====================================="
