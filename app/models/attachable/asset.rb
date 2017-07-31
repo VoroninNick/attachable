@@ -201,8 +201,9 @@ class Attachable::Asset < ActiveRecord::Base
 
 
   if Attachable.use_translations?
+    globalize_attributes = [:data_alt] + Attachable.extra_attributes_with_translations
 
-    translates :data_alt
+    translates *globalize_attributes
     accepts_nested_attributes_for :translations
     attr_accessible :translations, :translations_attributes
 

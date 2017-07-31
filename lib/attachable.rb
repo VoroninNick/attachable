@@ -10,6 +10,7 @@ module Attachable
 
   class << self
     attr_accessor :use_translations
+    attr_accessor :extra_attributes_with_translations
     attr_accessor :subdomain
     attr_accessor :assets_domain
     attr_accessor :base_path
@@ -19,6 +20,18 @@ module Attachable
       else
         return !!@use_translations
       end
+    end
+
+    def use_translations
+      return @use_translations
+    end
+
+    def extra_attributes_with_translations?
+      extra_attributes_with_translations.present?
+    end
+
+    def extra_attributes_with_translations
+      @extra_attributes_with_translations ||= []
     end
 
     def subdomain?
