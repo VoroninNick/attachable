@@ -23,16 +23,19 @@ class Attachable::Asset < ActiveRecord::Base
     enumerize :data_watermark_position, in: ["NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast"], default: "SouthEast"
     before_save :reprocess_data_if_needed
     def reprocess_data_if_needed
-      changed_position = self.data_watermark_position_changed? && self.data_watermark_position_was.present?
-      puts "====================================="
-      puts "====================================="
-      puts "reprocess_data_if_needed"
-      puts "data_watermark_position_changed?: #{data_watermark_position_changed?.inspect}"
-      puts "data_watermark_position: #{data_watermark_position.inspect}"
-      puts "data_watermark_position_was: #{data_watermark_position_was.inspect}"
-      puts "changed_position: #{changed_position.inspect}"
-      puts "====================================="
-      puts "====================================="
+      if self.respond_to?(:data_watermark_position_changed?)
+        changed_position = self.data_watermark_position_changed? && self.data_watermark_position_was.present?
+        puts "====================================="
+        puts "====================================="
+        puts "reprocess_data_if_needed"
+        puts "data_watermark_position_changed?: #{data_watermark_position_changed?.inspect}"
+        puts "data_watermark_position: #{data_watermark_position.inspect}"
+        puts "data_watermark_position_was: #{data_watermark_position_was.inspect}"
+        puts "changed_position: #{changed_position.inspect}"
+        puts "====================================="
+        puts "====================================="
+      end
+
       if changed_position
         keys_to_reprocess = []
         styles = self.data.styles
