@@ -212,8 +212,11 @@ class Attachable::Asset < ActiveRecord::Base
 
     class Translation
       self.table_name = :asset_translations
-      attr_accessible *attribute_names
+      begin
+        attr_accessible *attribute_names
+      rescue
 
+      end
       rails_admin do
         field :locale, :hidden
         field :data_alt
