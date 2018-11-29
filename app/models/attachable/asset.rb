@@ -267,10 +267,10 @@ class Attachable::Asset < ActiveRecord::Base
   def create_non_existing_versions
     return if styles.blank? || !exists?
 
-    styles.each do |style|
-      next if exists?(style)
+    styles.each do |style_key, style_definition|
+      next if exists?(style_key)
 
-      data.reprocess!(style)
+      data.reprocess!(style_key)
     end
   end
 end
