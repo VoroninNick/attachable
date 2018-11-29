@@ -18,6 +18,24 @@ class Attachable::Asset < ActiveRecord::Base
   self.table_name = :assets
   attr_accessible *attribute_names
 
+  class Config
+    def self.default_styles=(styles)
+      @@_default_styles = styles
+    end
+
+    def self.default_styles
+      @@_default_styles.presence || {}
+    end
+
+    def self.default_processors=(processors)
+      @@_default_processors = processors
+    end
+
+    def self.default_processors
+      @@_default_processors.presence || {}
+    end
+  end
+
   begin
     extend Enumerize
     enumerize :data_watermark_position, in: ["NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast"], default: "SouthEast"
@@ -140,12 +158,12 @@ class Attachable::Asset < ActiveRecord::Base
   end
 
   def attachment_styles
-    self.assetable.try{|a| a.send("#{self.assetable_field_name}_styles") rescue nil } || {}
+    self.assetable.try{|a| a.send("#{self.assetable_field_name}_styles") rescue nil } || Attachable::Asset::Config.default_styles
   end
 
   # currently not in use. it would be good if paperclip support dynamic processors like styles
   def attachment_processors
-    self.assetable.try{|a| a.send("#{self.assetable_field_name}_processors") rescue nil } || {}
+    self.assetable.try{|a| a.send("#{self.assetable_field_name}_processors") rescue nil } || Attachable::Asset::Config.default_processors
   end
 
   def styles
