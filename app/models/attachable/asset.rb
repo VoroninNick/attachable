@@ -24,7 +24,7 @@ class Attachable::Asset < ActiveRecord::Base
     end
 
     def self.default_styles
-      class_variable_get(:@@_default_styles).presence || {}
+      (class_variable_get(:@@_default_styles) rescue nil).presence || {}
     end
 
     def self.default_processors=(processors)
@@ -32,7 +32,7 @@ class Attachable::Asset < ActiveRecord::Base
     end
 
     def self.default_processors
-      class_variable_get(:@@_default_processors).presence || {}
+      (class_variable_get(:@@_default_processors) rescue nil).presence || {}
     end
   end
 
