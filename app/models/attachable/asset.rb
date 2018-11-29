@@ -20,19 +20,19 @@ class Attachable::Asset < ActiveRecord::Base
 
   class Config
     def self.default_styles=(styles)
-      @@_default_styles = styles
+      class_variable_set(:@@_default_styles, styles)
     end
 
     def self.default_styles
-      @@_default_styles.presence || {}
+      class_variable_get(:@@_default_styles).presence || {}
     end
 
     def self.default_processors=(processors)
-      @@_default_processors = processors
+      class_variable_set(:@@_default_processors, processors)
     end
 
     def self.default_processors
-      @@_default_processors.presence || {}
+      class_variable_get(:@@_default_processors).presence || {}
     end
   end
 
