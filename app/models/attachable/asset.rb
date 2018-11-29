@@ -17,7 +17,7 @@ require "paperclip"
 class Attachable::Asset < ActiveRecord::Base
   self.table_name = :assets
   attr_accessible *attribute_names
-  
+
   begin
     extend Enumerize
     enumerize :data_watermark_position, in: ["NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast"], default: "SouthEast"
@@ -40,45 +40,45 @@ class Attachable::Asset < ActiveRecord::Base
         keys_to_reprocess = []
         styles = self.data.styles
         #puts "h: #{styles.inspect}"
-        
+
         need_original = styles[:original].try{|s| args = s.instance_variable_get(:@other_args); args[:position].is_a?(Proc) }
-        
+
         if need_original
           keys_to_reprocess = styles.keys
-        end  
+        end
         keys_to_reprocess = styles.map{|k, v|
           args = v.instance_variable_get(:@other_args)
-          if args[:position].is_a?(Proc)  
+          if args[:position].is_a?(Proc)
             next k
           else
             next nil
-          end  
+          end
         }.select(&:present?)
         puts "keys_to_reprocess: #{keys_to_reprocess.inspect}"
         if keys_to_reprocess.present?
           self.reprocess!(*keys_to_reprocess)
-        end  
-      end  
-    end  
+        end
+      end
+    end
   rescue
-  end  
-  
+  end
+
   if self.table_exists? && self.column_names.include?("sorting_position")
     default_scope do
       order("sorting_position,id asc")
     end
-    after_create :initialize_sorting_position 
+    after_create :initialize_sorting_position
     def initialize_sorting_position
       if self.sorting_position.blank? && assetable_id.present?
         items = assetable.send(assetable_field_name).pluck(:id, :sorting_position)
         #max_item = items.map{|item| item[1] || item[0] }.max
         #count = items.count
         #if max_item
-        
+
         self.sorting_position = items.last[1].try{|i| i + 1} || items.count
         self.save
       end
-    end  
+    end
   else
     default_scope do
       order("id asc")
@@ -87,7 +87,7 @@ class Attachable::Asset < ActiveRecord::Base
 
   belongs_to :assetable, polymorphic: true
 
-  has_attached_file :data, styles: proc {|attachment| attachment.instance.attachment_styles }, 
+  has_attached_file :data, styles: proc {|attachment| attachment.instance.attachment_styles },
     url: "/system/attachable/assets/data/:id_partition/:style/:filename",
     path: ":rails_root/public:url"
   attr_accessible :data, :delete_data
@@ -212,11 +212,6 @@ class Attachable::Asset < ActiveRecord::Base
 
     class Translation
       self.table_name = :asset_translations
-      begin
-        attr_accessible *attribute_names
-      rescue
-
-      end
       rails_admin do
         field :locale, :hidden
         field :data_alt
@@ -269,5 +264,13 @@ class Attachable::Asset < ActiveRecord::Base
     true
   end
 
+  def create_non_existing_versions
+    return if styles.blank? || !exists?
 
+    styles.each do |style|
+      next if exists?(style)
+
+      data.reprocess!(style)
+    end
+  end
 end
