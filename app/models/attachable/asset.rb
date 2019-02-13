@@ -36,10 +36,16 @@ class Attachable::Asset < ActiveRecord::Base
       (class_variable_get(:@@_default_processors) rescue nil).presence || {}
     end
   end
+  
+  def self.has_watermark_column?
+    self.table_exists? && self.column_names.include?("data_watermark_position")
+  end  
 
   begin
     extend Enumerize
-    enumerize :data_watermark_position, in: ["NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast"], default: "SouthEast"
+    if has_watermark_column?
+      enumerize :data_watermark_position, in: ["NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast"], default: "SouthEast"
+    end
     before_save :reprocess_data_if_needed
     def reprocess_data_if_needed
       if self.respond_to?(:data_watermark_position_changed?)
