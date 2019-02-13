@@ -14,6 +14,7 @@
 #  updated_at           :datetime         not null
 #
 require "paperclip"
+require "uri"
 class Attachable::Asset < ActiveRecord::Base
   self.table_name = :assets
   attr_accessible *attribute_names
@@ -137,7 +138,7 @@ class Attachable::Asset < ActiveRecord::Base
 
   def exists?(style = nil)
     original_full_path = path
-    full_path = path(style)
+    full_path = URI.decode(path(style))
 
     #if File.exists?(original_full_path) && !File.exists?(full_path)
     #  data.reprocess!
