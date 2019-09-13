@@ -138,7 +138,7 @@ class Attachable::Asset < ActiveRecord::Base
     #data.path(style)
     full_path = Attachable.base_path + data.url(style)
     full_path_suffix_index = full_path.index("?")
-    full_path[full_path_suffix_index, full_path.length] = ''
+    full_path[full_path_suffix_index, full_path.length] = '' if full_path_suffix_index
     full_path
   end
 
