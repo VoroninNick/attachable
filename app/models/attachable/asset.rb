@@ -126,6 +126,18 @@ class Attachable::Asset < ActiveRecord::Base
 
   #before_save
 
+  def file_type
+    return if data_content_type.blank?
+
+    if data_content_type == "image/svg+xml"
+      'svg'
+    elsif data_content_type == 'image/png'
+      'png'
+    elsif data_content_type == 'image/jpeg'
+      'jpg'
+    end
+  end
+
   def path(style = nil)
     #data.reprocess!
     #data.path(style)
