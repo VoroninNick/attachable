@@ -14,6 +14,7 @@
 #  updated_at           :datetime         not null
 #
 require "paperclip"
+require "uri"
 class Attachable::Asset < ActiveRecord::Base
   self.table_name = :assets
   attr_accessible *attribute_names
@@ -35,10 +36,16 @@ class Attachable::Asset < ActiveRecord::Base
       (class_variable_get(:@@_default_processors) rescue nil).presence || {}
     end
   end
+  
+  def self.has_watermark_column?
+    self.table_exists? && self.column_names.include?("data_watermark_position")
+  end  
 
   begin
     extend Enumerize
-    enumerize :data_watermark_position, in: ["NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast"], default: "SouthEast"
+    if has_watermark_column?
+      enumerize :data_watermark_position, in: ["NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast"], default: "SouthEast"
+    end
     before_save :reprocess_data_if_needed
     def reprocess_data_if_needed
       if self.respond_to?(:data_watermark_position_changed?)
@@ -143,13 +150,13 @@ class Attachable::Asset < ActiveRecord::Base
     #data.path(style)
     full_path = Attachable.base_path + data.url(style)
     full_path_suffix_index = full_path.index("?")
-    full_path[full_path_suffix_index, full_path.length] = ''
+    full_path[full_path_suffix_index, full_path.length] = '' if full_path_suffix_index
     full_path
   end
 
   def exists?(style = nil)
     original_full_path = path
-    full_path = path(style)
+    full_path = URI.decode(path(style))
 
     #if File.exists?(original_full_path) && !File.exists?(full_path)
     #  data.reprocess!
