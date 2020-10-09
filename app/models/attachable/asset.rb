@@ -36,10 +36,10 @@ class Attachable::Asset < ActiveRecord::Base
       (class_variable_get(:@@_default_processors) rescue nil).presence || {}
     end
   end
-  
+
   def self.has_watermark_column?
     self.table_exists? && self.column_names.include?("data_watermark_position")
-  end  
+  end
 
   begin
     extend Enumerize
@@ -177,6 +177,7 @@ class Attachable::Asset < ActiveRecord::Base
   end
 
   def attachment_styles
+    return @attachment_styles if @attachment_styles
     self.assetable.try{|a| a.send("#{self.assetable_field_name}_styles") rescue nil }.presence || Attachable::Asset::Config.default_styles
   end
 
@@ -187,6 +188,14 @@ class Attachable::Asset < ActiveRecord::Base
 
   def styles
     attachment_styles
+  end
+
+  def set_attachment_styles(styles)
+    @attachment_styles = styles
+  end
+
+  def unset_attachment_styles
+    @attachment_styles = nil
   end
 
   def file_name_fallback
